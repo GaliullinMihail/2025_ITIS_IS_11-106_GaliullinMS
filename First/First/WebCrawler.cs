@@ -55,7 +55,6 @@ public class WebCrawler
             }
             await Task.WhenAll(tasks);
         }
-        
         SaveIndexFile();
     }
 

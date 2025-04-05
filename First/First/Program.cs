@@ -1,6 +1,4 @@
-﻿
-
- using First;
+﻿using First;
 
  class Program
 {
@@ -12,11 +10,5 @@
             "https://ru.wikipedia.org/wiki/Текст"
         };
         await crawler.CrawlAsync(linkList);
-
-
     }
-    
-    
-    
-    
 }
