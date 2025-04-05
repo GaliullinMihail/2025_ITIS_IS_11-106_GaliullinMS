@@ -19,6 +19,7 @@ public class WebCrawler
     private readonly string _outputDirectory;
     private int _currentDocId;
     private readonly double _matchRussian;
+    private readonly string _startDirectory;
 
     public WebCrawler(int minPages = 100, int minWords = 1000, double matchRussian = 0.5,string outputDirectory = "pages")
     {
@@ -31,8 +32,9 @@ public class WebCrawler
         _outputDirectory = outputDirectory;
         _currentDocId = 0;
         _matchRussian = matchRussian;
+        _startDirectory = "D:\\Учеба\\Information_Search\\git\\2025_ITIS_IS_11-106_GaliullinMS";
 
-        Directory.CreateDirectory(Path.Combine("D:\\Учеба\\Information_Search\\First\\First", _outputDirectory));
+        Directory.CreateDirectory(Path.Combine(_startDirectory, _outputDirectory));
     }
 
     public async Task CrawlAsync(IEnumerable<string> startUrls)
@@ -80,7 +82,7 @@ public class WebCrawler
                 _downloadedPages.TryAdd(docId, url);
                 
                 // Сохранить текст в файл
-                await File.WriteAllTextAsync(Path.Combine(Path.Combine("D:\\Учеба\\Information_Search\\First\\First", _outputDirectory), $"{docId}.txt"), text);
+                await File.WriteAllTextAsync(Path.Combine(Path.Combine(_startDirectory, _outputDirectory), $"{docId}.txt"), text);
             }
 
             // Не набрали нужное кол-во берем дочерние
@@ -176,6 +178,6 @@ public class WebCrawler
         var indexLines = _downloadedPages.OrderBy(x => x.Key)
             .Select(x => $"{x.Key}\t{x.Value}");
         
-        File.WriteAllLines(Path.Combine(System.IO.Path.Combine("D:\\Учеба\\Information_Search\\First\\First", _outputDirectory), "index.txt"), indexLines);
+        File.WriteAllLines(Path.Combine(System.IO.Path.Combine(_startDirectory, _outputDirectory), "index.txt"), indexLines);
     }
 }
