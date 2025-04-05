@@ -32,7 +32,7 @@ public class WebCrawler
         _outputDirectory = outputDirectory;
         _currentDocId = 0;
         _matchRussian = matchRussian;
-        _startDirectory = "D:\\Учеба\\Information_Search\\git\\2025_ITIS_IS_11-106_GaliullinMS";
+        _startDirectory = "D:\\Учеба\\Information_Search\\git\\2025_ITIS_IS_11-106_GaliullinMS\\1";
 
         Directory.CreateDirectory(Path.Combine(_startDirectory, _outputDirectory));
     }
