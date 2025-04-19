@@ -17,11 +17,20 @@ public static class IDF
     {
         var countFiles = Directory.GetFiles(PagesInputPath).Length;
         
-        foreach (var keys in dictionary)
+        var allWords = new HashSet<string>();
+        
+        for (int i = 1; i < 101; i++)
         {
-            var idf = Math.Round((decimal)Math.Log10((double) countFiles / keys.Value.Count), 6);
-            Idf.TryAdd(keys.Key, idf);
+            var words = (await File.ReadAllTextAsync($@"{PagesInputPath}\{i}.txt")).Split(' ');
+            allWords.UnionWith(words);
         }
+        
+        foreach (var word in allWords)
+        {
+            var idf = Math.Round((decimal)Math.Log10(((double) countFiles) / dictionary[word].Count), 6);
+            Idf.TryAdd(word, idf);
+        }
+        
         await CsvSaver.SaveCsv(IdfPath, Idf);
         
         return Idf;

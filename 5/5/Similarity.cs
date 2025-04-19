@@ -2,7 +2,7 @@
 
 public class Similarity
 {
-    public static decimal CalculateCosineSimilarity(List<decimal> x, List<decimal> y)
+    public static decimal CalculateScore(List<decimal> x, List<decimal> y)
     {
         if (x.Count != y.Count)
             throw new ArgumentException("Length are not the same");

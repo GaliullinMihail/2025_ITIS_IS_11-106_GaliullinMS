@@ -14,6 +14,18 @@ public static class TF
     
     private static readonly Dictionary<string, Dictionary<string, decimal>> Tf = new ();
     
+    public static Dictionary<string, decimal> CalculateForQuery(IEnumerable<string> tokens)
+    {
+        var list = tokens.ToList();
+        var dict = list
+            .GroupBy(x => x)
+            .ToDictionary(
+                kv => kv.Key,
+                kv => Math.Round((decimal) kv.Count() / list.Count, 6));
+        
+        return dict;
+    }
+    
     public static async Task<Dictionary<string, Dictionary<string, decimal>>> CreateTermFrequency()
     {
         var allWords = new HashSet<string>();
