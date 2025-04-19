@@ -7,7 +7,7 @@
         var crawler = new WebCrawler();
         var linkList = new List<string>()
         {
-            "https://ru.wikipedia.org/wiki/Текст"
+            "https://ru.ruwiki.ru/wiki/Заглавная_страница"
         };
         await crawler.CrawlAsync(linkList);
     }

@@ -32,7 +32,7 @@ public class WebCrawler
         _outputDirectory = outputDirectory;
         _currentDocId = 0;
         _matchRussian = matchRussian;
-        _startDirectory = "D:\\Учеба\\Information_Search\\git\\2025_ITIS_IS_11-106_GaliullinMS\\1";
+        _startDirectory = "D:\\University\\Information_Search\\git\\2025_ITIS_IS_11-106_GaliullinMS\\1";
 
         Directory.CreateDirectory(Path.Combine(_startDirectory, _outputDirectory));
     }
@@ -76,7 +76,7 @@ public class WebCrawler
             var text = ExtractText(doc);
             
             // Проверить язык и длину текста 
-            if (IsRussian(text) && WordCount(text) >= _minWords)
+            if (WordCount(text) >= _minWords)
             {
                 var docId = Interlocked.Increment(ref _currentDocId);
                 _downloadedPages.TryAdd(docId, url);
@@ -135,11 +135,15 @@ public class WebCrawler
             foreach (var node in anchorNodes)
             {
                 var href = node.Attributes["href"].Value;
-                if (!string.IsNullOrWhiteSpace(href) && !href.StartsWith("#"))  //убрать пустые или локальные
+                
+                // Удаляем управляющие символы ASCII (коды 0-31 и 127)  
+                string cleanedHref = Regex.Replace(href, @"[\x00-\x1F\x7F]", "");
+                
+                if (!string.IsNullOrWhiteSpace(cleanedHref) && !cleanedHref.Contains("#"))  //убрать пустые или локальные)
                 {
                     try
                     {
-                        var absoluteUrl = new Uri(new Uri(baseUrl), href).AbsoluteUri;
+                        var absoluteUrl = new Uri(new Uri(baseUrl), cleanedHref).AbsoluteUri;
                         if (IsValidUrl(absoluteUrl))
                         {
                             links.Add(absoluteUrl);
@@ -159,14 +163,6 @@ public class WebCrawler
             && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
     }
 
-    // первые 500 символом проверяем на [А-я] > _matchRussian
-    private bool IsRussian(string text)
-    {
-        var sample = text.Length > 500 ? text.Substring(0, 500) : text;
-        var cyrillicCount = sample.Count(c => c >= 'А' && c <= 'я');
-        return (double)cyrillicCount / sample.Length > _matchRussian;
-    }
-
     private int WordCount(string text)
     {
         return Regex.Matches(text, @"[\p{L}]+").Count;  //\p{L} - любая буква любого языка
@@ -176,7 +172,7 @@ public class WebCrawler
     private void SaveIndexFile()
     {
         var indexLines = _downloadedPages.OrderBy(x => x.Key)
-            .Select(x => $"{x.Key}\t{x.Value}");
+            .Select(x => $"{x.Key}\t{Uri.UnescapeDataString(x.Value)}");
         
         File.WriteAllLines(Path.Combine(System.IO.Path.Combine(_startDirectory, _outputDirectory), "index.txt"), indexLines);
     }
